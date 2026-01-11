@@ -1,0 +1,186 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator seed {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  EVENT_CREATOR
+  ADMIN
+}
+
+enum EventStatus {
+  UPCOMING
+  ONGOING
+  ENDED
+}
+
+enum NotificationType {
+  EVENT_CHANGED
+  EVENT_CANCELLED
+  PERMISSION_REQUEST
+  USER_INTERESTED
+}
+
+enum VerificationCodeType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
+enum PermissionRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id          String   @id @default(uuid())
+  name        String
+  email       String   @unique
+  password    String
+  role        UserRole @default(USER)
+  company     String?
+  gender      String?
+  language    String   @default("Tiếng Việt")
+  country     String   @default("Việt Nam")
+  timezone    String   @default("UTC+7")
+  avatar      String?  // base64 encoded image
+  isVerified  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  createdEvents      Event[]
+  interestedEvents   UserEventInterest[]
+  notifications      Notification[]
+  permissionRequests PermissionRequest[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model EventCategory {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  events Event[]
+
+  @@index([name])
+}
+
+model Region {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  code      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  events Event[]
+
+  @@index([code])
+}
+
+model Event {
+  id             String      @id @default(uuid())
+  name           String
+  description    String
+  image          String?     // base64 encoded image
+  location       String
+  latitude       Float?
+  longitude      Float?
+  startTime      DateTime
+  endTime        DateTime
+  status         EventStatus @default(UPCOMING)
+  categoryId     String
+  regionId       String
+  creatorId      String
+  interestedCount Int        @default(0)
+  source         String?     // "internal", "sansukien", "ticketbox"
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  // Relations
+  category       EventCategory @relation(fields: [categoryId], references: [id])
+  region         Region        @relation(fields: [regionId], references: [id])
+  creator        User          @relation(fields: [creatorId], references: [id])
+  interestedUsers UserEventInterest[]
+
+  @@index([categoryId])
+  @@index([regionId])
+  @@index([creatorId])
+  @@index([status])
+  @@index([startTime])
+  @@index([name])
+}
+
+model UserEventInterest {
+  id        String   @id @default(uuid())
+  userId    String
+  eventId   String
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId])
+  @@index([userId])
+  @@index([eventId])
+}
+
+model PermissionRequest {
+  id            String                  @id @default(uuid())
+  userId        String
+  requestedRole UserRole
+  status        PermissionRequestStatus @default(PENDING)
+  createdAt     DateTime                @default(now())
+  processedAt   DateTime?
+  processedBy   String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  link      String?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+model VerificationCode {
+  id        String               @id @default(uuid())
+  email     String
+  code      String
+  type      VerificationCodeType
+  expiresAt DateTime
+  createdAt DateTime             @default(now())
+
+  @@index([email, code, type])
+  @@index([expiresAt])
+}
