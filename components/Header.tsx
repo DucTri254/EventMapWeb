@@ -20,6 +20,7 @@ export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const [user, setUser] = useState<any>(null);
+  const [mounted, setMounted] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -27,6 +28,7 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
+    setMounted(true);
     const currentUser = getUser();
     setUser(currentUser);
     if (currentUser) {
@@ -95,7 +97,7 @@ export default function Header() {
         </div>
 
         <div className="flex items-center space-x-4">
-          {hasRole('EVENT_CREATOR') && (
+          {mounted && hasRole('EVENT_CREATOR') && (
             <Link
               href="/creator/events/create"
               className="bg-green-600 px-4 py-2 rounded-lg hover:bg-green-700 flex items-center space-x-2"
@@ -105,7 +107,7 @@ export default function Header() {
             </Link>
           )}
 
-          {user && (
+          {mounted && user && (
             <>
               <div className="relative">
                 <button
@@ -160,7 +162,7 @@ export default function Header() {
                   <span>▼</span>
                 </button>
 
-                {showUserMenu && (
+                {showUserMenu && mounted && (
                   <div className="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-lg z-50">
                     {hasRole('ADMIN') ? (
                       <>
@@ -238,7 +240,7 @@ export default function Header() {
             </>
           )}
 
-          {!user && (
+          {mounted && !user && (
             <Link
               href="/login"
               className="bg-primary px-4 py-2 rounded-lg hover:bg-primary-light"
