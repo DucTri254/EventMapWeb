@@ -17,12 +17,12 @@ export default function EventCard({ event, onClick, showInterested = true, onInt
       className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
       onClick={onClick}
     >
-      <div className="relative h-48 bg-gray-200">
+      <div className="relative h-48 bg-gray-200 flex items-center justify-center overflow-hidden">
         {event.image ? (
           <img
             src={event.image}
             alt={event.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-400 to-purple-500">

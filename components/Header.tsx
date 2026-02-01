@@ -72,7 +72,10 @@ export default function Header() {
     <header className="bg-gray-800 text-white p-4">
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Link href="/home" className="flex items-center space-x-2">
+          <Link
+            href={pathname?.startsWith('/admin') ? '/admin' : '/home'}
+            className="flex items-center space-x-2"
+          >
             <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
               📍
             </div>
@@ -183,6 +186,12 @@ export default function Header() {
                           className="block px-4 py-2 hover:bg-gray-100"
                         >
                           Quản lí Sự Kiện
+                        </Link>
+                        <Link
+                          href="/profile"
+                          className="block px-4 py-2 hover:bg-gray-100"
+                        >
+                          Trang cá nhân
                         </Link>
                       </>
                     ) : hasRole('EVENT_CREATOR') ? (

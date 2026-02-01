@@ -36,6 +36,7 @@ enum NotificationType {
 enum VerificationCodeType {
   EMAIL_VERIFICATION
   PASSWORD_RESET
+  EMAIL_CHANGE
 }
 
 enum PermissionRequestStatus {
@@ -178,9 +179,11 @@ model VerificationCode {
   email     String
   code      String
   type      VerificationCodeType
+  userId    String?              // for EMAIL_CHANGE: which user requested
   expiresAt DateTime
   createdAt DateTime             @default(now())
 
   @@index([email, code, type])
   @@index([expiresAt])
+  @@index([userId, type])
 }

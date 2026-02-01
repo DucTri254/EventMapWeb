@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Header from '@/components/Header';
-import ImageUpload from '@/components/ImageUpload';
+import EventImageUrl from '@/components/EventImageUrl';
 import { api } from '@/lib/api';
 import { getUser, hasRole } from '@/lib/auth';
 import { Event } from '@/types/event';
@@ -171,11 +171,10 @@ export default function EditEventPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Left Column */}
             <div className="space-y-4">
-              <ImageUpload
+              <EventImageUrl
                 value={formData.image}
-                onChange={(base64) => setFormData({ ...formData, image: base64 })}
-                label="ảnh sự kiện"
-                circular={false}
+                onChange={(url) => setFormData({ ...formData, image: url })}
+                label="Ảnh sự kiện (URL)"
               />
 
               <div>

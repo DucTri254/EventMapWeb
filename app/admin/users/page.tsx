@@ -87,7 +87,7 @@ export default function AdminUsersPage() {
           <h1 className="text-3xl font-bold">Quản lý tài khoản</h1>
           <div className="flex space-x-4">
             <Link
-              href="/admin"
+              href="/admin/events"
               className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300"
             >
               Quản lí Sự Kiện

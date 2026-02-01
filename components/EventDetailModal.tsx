@@ -72,11 +72,11 @@ export default function EventDetailModal({
 
         <div className="p-6">
           {event.image && (
-            <div className="mb-4">
+            <div className="mb-4 w-full h-64 flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden">
               <img
                 src={event.image}
                 alt={event.name}
-                className="w-full h-64 object-cover rounded-lg"
+                className="max-w-full max-h-full object-contain rounded-lg"
               />
             </div>
           )}

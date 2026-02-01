@@ -52,6 +52,27 @@ const sendPasswordResetCode = async (email, code) => {
   return transporter.sendMail(mailOptions);
 };
 
+const sendEmailChangeCode = async (newEmail, code) => {
+  const mailOptions = {
+    from: process.env.FROM_EMAIL,
+    to: newEmail,
+    subject: 'EventMap - Xác minh email mới',
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #2d5016;">EventMap - Xác minh địa chỉ email mới</h2>
+        <p>Bạn đã yêu cầu đổi email. Mã xác minh của bạn là:</p>
+        <div style="background-color: #f0f0f0; padding: 20px; text-align: center; font-size: 32px; font-weight: bold; letter-spacing: 5px; margin: 20px 0;">
+          ${code}
+        </div>
+        <p>Mã có hiệu lực trong 10 phút.</p>
+        <p style="color: #666; font-size: 12px;">Nếu bạn không yêu cầu đổi email, hãy bỏ qua email này.</p>
+      </div>
+    `,
+  };
+
+  return transporter.sendMail(mailOptions);
+};
+
 const sendEventChanged = async (email, eventName, changes) => {
   const mailOptions = {
     from: process.env.FROM_EMAIL,
@@ -148,6 +169,7 @@ const sendPermissionRequest = async (email, userName, requestedRole) => {
 module.exports = {
   sendVerificationCode,
   sendPasswordResetCode,
+  sendEmailChangeCode,
   sendEventChanged,
   sendEventCancelled,
   sendEventReminder,
